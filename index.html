@@ -103,11 +103,10 @@
       // 事件监听函数里的this也就是发生该事件的元素，这里是被点击的checkbox
 
       // console.log(e);
-      let inBetween = false; // 辅助变量，帮助识别复选框是否在两次勾选的复选框之间
-      // 检查是否按下shift键,如果是,e.shiftKey=true
-      // 由于用户uncheck时也会触发事件，但这里只考虑用户check的情况
-      // 所以还要检查用户是在选中而非取消选中
-      if (e.shiftKey && this.checked) {
+      // 辅助变量，在forEach循环识别复选框是否在两次勾选的复选框之间
+      let inBetween = false;
+      // 检查是否按下shift键, 按下时 e.shiftKey=true
+      if (e.shiftKey) {
         // 从第一个循环到最后一个复选框
         // 遇到lastChecked后开始勾选 inBetween 从 false变为 true
         // 遇到当前复选框后取消勾选 inBetween 从 true 变为 false
@@ -116,7 +115,11 @@
             inBetween = !inBetween;
           }
           if (inBetween) {
-            checkbox.checked = true;
+            // 如果这次是勾选复选框，上次也是勾选，则勾选中间所有复选框
+            if (this.checked && lastChecked.checked) checkbox.checked = true;
+            // 如果这次是取消勾选复选框，这次也是取消勾选，则取消勾选中间所有复选框
+            if (!this.checked && !lastChecked.checked) checkbox.checked = false;
+            // 如果上次与这次行为不一致，则什么也不做
           }
         })
       }
